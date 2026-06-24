@@ -1,0 +1,81 @@
+LIBRARY IEEE;
+USE IEEE.std_logic_1164.ALL;
+USE IEEE.numeric_std.ALL;
+
+ENTITY contador_tempo IS
+  PORT (
+    clk     : IN  STD_LOGIC;
+    rst_n   : IN  STD_LOGIC;
+    enable  : IN  STD_LOGIC;
+    clear   : IN  STD_LOGIC;
+    minuto  : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+    dez_seg : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+    uni_seg : OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
+    dec_seg : OUT STD_LOGIC_VECTOR(3 DOWNTO 0)
+  );
+END contador_tempo;
+
+ARCHITECTURE bhv OF contador_tempo IS
+  CONSTANT DEC_SEG_COUNT : INTEGER := 5000000;  -- 50MHz * 0.1s = 5,000,000
+  SIGNAL cnt_div        : INTEGER RANGE 0 TO DEC_SEG_COUNT - 1 := 0;
+  SIGNAL dec_seg_int    : INTEGER RANGE 0 TO 9 := 0;
+  SIGNAL uni_seg_int    : INTEGER RANGE 0 TO 9 := 0;
+  SIGNAL dez_seg_int    : INTEGER RANGE 0 TO 5 := 0;
+  SIGNAL minuto_int     : INTEGER RANGE 0 TO 9 := 0;
+BEGIN
+
+  PROCESS(clk, rst_n)
+  BEGIN
+    IF rst_n = '0' THEN
+      cnt_div      <= 0;
+      dec_seg_int  <= 0;
+      uni_seg_int  <= 0;
+      dez_seg_int  <= 0;
+      minuto_int   <= 0;
+    ELSIF rising_edge(clk) THEN
+      IF clear = '1' THEN
+        cnt_div      <= 0;
+        dec_seg_int  <= 0;
+        uni_seg_int  <= 0;
+        dez_seg_int  <= 0;
+        minuto_int   <= 0;
+      ELSIF enable = '1' THEN
+        IF cnt_div < DEC_SEG_COUNT - 1 THEN
+          cnt_div <= cnt_div + 1;
+        ELSE
+          cnt_div <= 0;
+          -- Incrementa decimos de segundo
+          IF dec_seg_int < 9 THEN
+            dec_seg_int <= dec_seg_int + 1;
+          ELSE
+            dec_seg_int <= 0;
+            -- Incrementa unidade de segundo
+            IF uni_seg_int < 9 THEN
+              uni_seg_int <= uni_seg_int + 1;
+            ELSE
+              uni_seg_int <= 0;
+              -- Incrementa dezena de segundo
+              IF dez_seg_int < 5 THEN
+                dez_seg_int <= dez_seg_int + 1;
+              ELSE
+                dez_seg_int <= 0;
+                -- Incrementa minuto
+                IF minuto_int < 9 THEN
+                  minuto_int <= minuto_int + 1;
+                ELSE
+                  minuto_int <= 0;
+                END IF;
+              END IF;
+            END IF;
+          END IF;
+        END IF;
+      END IF;
+    END IF;
+  END PROCESS;
+
+  minuto  <= std_logic_vector(to_unsigned(minuto_int, 4));
+  dez_seg <= std_logic_vector(to_unsigned(dez_seg_int, 4));
+  uni_seg <= std_logic_vector(to_unsigned(uni_seg_int, 4));
+  dec_seg <= std_logic_vector(to_unsigned(dec_seg_int, 4));
+
+END bhv;

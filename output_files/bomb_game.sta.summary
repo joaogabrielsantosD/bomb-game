@@ -1,0 +1,77 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'clock'
+Slack : -8.809
+TNS   : -793.932
+
+Type  : Slow 1200mV 85C Model Setup 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : -4.164
+TNS   : -4.164
+
+Type  : Slow 1200mV 85C Model Hold 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.083
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'clock'
+Slack : 0.432
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -234.972
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.413
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'clock'
+Slack : -7.958
+TNS   : -719.692
+
+Type  : Slow 1200mV 0C Model Setup 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : -3.823
+TNS   : -3.823
+
+Type  : Slow 1200mV 0C Model Hold 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.077
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'clock'
+Slack : 0.382
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -234.972
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.391
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'clock'
+Slack : -3.234
+TNS   : -252.281
+
+Type  : Fast 1200mV 0C Model Setup 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : -1.389
+TNS   : -1.389
+
+Type  : Fast 1200mV 0C Model Hold 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.027
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'clock'
+Slack : 0.178
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -169.469
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'top:inst|ir_verilog:ir_verilog_inst|led2[0]'
+Slack : 0.441
+TNS   : 0.000
+
+------------------------------------------------------------

@@ -1,0 +1,1 @@
+Warning (10268): Verilog HDL information at ir.v(198): always construct contains both blocking and non-blocking assignments File: /home/joao/Documentos/UFPE/EleDig/Projetos/bomb_game/src/IR/ir.v Line: 198

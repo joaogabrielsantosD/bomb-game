@@ -1,0 +1,14 @@
+
+State Machine - |test|top:inst|ir_verilog:ir_verilog_inst|estado_atual
+Name estado_atual.IDLE_STATE estado_atual.DATA_STATE estado_atual.ATRASO_450us estado_atual.ATRASO_900us 
+estado_atual.IDLE_STATE 0 0 0 0 
+estado_atual.ATRASO_900us 1 0 0 1 
+estado_atual.ATRASO_450us 1 0 1 0 
+estado_atual.DATA_STATE 1 1 0 0 
+
+State Machine - |test|lcd_controller:inst2|state
+Name state.SEND state.READY state.INIT state.POWER 
+state.POWER 0 0 0 0 
+state.INIT 0 0 1 1 
+state.READY 0 1 0 1 
+state.SEND 1 0 0 1 
