@@ -8,7 +8,7 @@ entity music is
       stop : in std_logic;
       play : in std_logic;
 		
-      music_selection : in std_logic_vector (1 downto 0);
+      music_selection : in std_logic_vector (2 downto 0);
 		
       mute   : in  std_logic;
       buzzer : out std_logic
@@ -48,6 +48,6 @@ begin
       selection => music_selection
    );
 
-   buzzer <= beep when mute = '0' else '0'; 
+   buzzer <= beep when mute = '0' and stop = '0' else '0'; 
 
 end player;

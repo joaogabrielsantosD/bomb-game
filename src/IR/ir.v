@@ -1,244 +1,251 @@
-/*---------------------------------
-Arquivo:   ir_verilog.v
-Modulo:    ir_verilog(clk,rst_n,IR,led_cs,led_db)
-Descrição: Controle de Remoto Infravemelho
-Autor:     Malki-çedheq Benjamim
-Data:      20/01/2022
-----------------------------------*/
-module ir_verilog(clk,rst_n,IR,led_cs,led_db, select, state);
-
-  input   clk; //clock de 50MHz
-  input   rst_n; //reset ativo baixo
-  input   IR; //entrada de dados irda
-  output reg [3:0] led_cs; //4 displays BCD7SEG
-  output reg [7:0] led_db; //7 segmentos e ponto de cada display BCD7SEG
-  output reg [1:0] select;
-  output reg [1:0] state;
+module ir_protocol (
+  input clk,
+  input rst_n,
+  input IR,
+  output reg [3:0] led_cs,
+  output reg [7:0] led_db,
+  output reg [2:0] sel,
+  output reg stop_music
+);
   
-  reg [7:0] led1,led2,led3,led4; //representa cada display com 7 segmentos
-  reg [15:0] irda_data;    // armazena o dado do irda, e então envia para os 7 segmentos
-  reg [31:0] get_data;     // armazena os 32 bits do dado do irda
-  reg [5:0]  data_cnt;     // contador para os 32 bits do dado do irda
-  reg [2:0]  estado_atual, prox_estado; //registradores de estado da FSM
-  reg error_flag;          // flag de erro durante os 32 bits de dados do irda
+  reg [7:0]  led1, led2, led3, led4;    // represents each 7-segment display
+  reg [15:0] irda_data;                 // stores the IrDA data and then sends it to the 7-segment displays
+  reg [31:0] get_data;                  // stores the 32 bits of IrDA data
+  reg [5:0]  data_cnt;                  // counter for the 32 bits of the IrDA data
+  reg [2:0]  current_state, next_state; // FSM state registers
+  reg error_flag;                       // Error flag during the 32 bits of IrDA data.
 
-  //----------------------------------------------------------------------------
-  reg irda_reg0;       //valor instável
-  reg irda_reg1;       //recebe irda_reg0, para estabilização
-  reg irda_reg2;       //recebe irda_reg1, auxilia a determinar a borda do irda
-  wire irda_negedge; //determina a borda de descida do irda
-  wire irda_posedge; //determina a borda de subida do irda
-  wire irda_change;    //determina a transição de borda do irda
-  
-  //reg[15:0] cnt_scan;//ɨ��Ƶ�ʼ�����
+  reg irda_reg0;     // unstable value
+  reg irda_reg1;     // receives irda_reg0 for stabilization
+  reg irda_reg2;     // receives irda_reg1, helps determine the IrDA edge
+  wire irda_negedge; // determines the falling edge of the IrDA signal
+  wire irda_posedge; // determines the IrDA rising edge
+  wire irda_change;  // determines the IrDA edge transition
+
+  reg received_packet;
+  // reg [7:0] cmd_value;
    
-  always @ (posedge clk) //sincroniza os registradores do irda
-    if(!rst_n) //reset assincrono dos registradores do irda
-      begin
-        irda_reg0 <= 1'b0; //limpa o registrador irda_reg0
-        irda_reg1 <= 1'b0; //limpa o registrador irda_reg1
-        irda_reg2 <= 1'b0; //limpa o registrador irda_reg2
-      end
+	always @(posedge clk) 
+  begin
+    if (!rst_n)
+      received_packet <= 1'b0;
     else
-      begin
-        //led_estado_atual<= 4'b0000; //atualiza os registradores do irda na borda de subida do clk
-        irda_reg0 <= IR; //recebe o valor lido irda
-        irda_reg1 <= irda_reg0; //atualiza com valor estável
-        irda_reg2 <= irda_reg1; // atualiza garantindo valor estável de IR
-      end
+      received_packet <= (current_state == DATA_STATE) && 
+                         (next_state == IDLE_STATE)    && 
+                         (data_cnt == 6'd32)           && 
+                         !error_flag;
+  end
+	
+  always @(posedge clk) // synchronizes the irda registers
+  begin
+    if(!rst_n) begin     // Asynchronous reset of IrDA registers
+      irda_reg0 <= 1'b0; // clears the irda_reg0 register
+      irda_reg1 <= 1'b0; // clears the irda_reg1 register
+      irda_reg2 <= 1'b0; // clears the irda_reg2 register
+    end else begin
+      //led_current_state <= 4'b0000; // updates the IrDA registers on the rising edge of the CLK
+      irda_reg0 <= IR;                // receives the value read via IRDA
+      irda_reg1 <= irda_reg0;         // updates with a stable value
+      irda_reg2 <= irda_reg1;         // updates while ensuring a stable income tax value
+    end
+  end
      
-  assign irda_change = irda_negedge | irda_posedge; //atribui 1 numa transição de borda de irda
-  assign irda_negedge = irda_reg2 & (~irda_reg1);   //atribui 1 na borda de descida de irda
-  assign irda_posedge = (~irda_reg2) & irda_reg1;   //atribui 1 na borda de descida de irda
+  assign irda_change = irda_negedge | irda_posedge; // assigns 1 on an IrDA edge transition
+  assign irda_negedge = irda_reg2 & (~irda_reg1);   // assigns 1 on the falling edge of IrDA
+  assign irda_posedge = (~irda_reg2) & irda_reg1;   // assigns 1 on the falling edge of IrDA
 
-  reg [10:0] cnt1;      //Divisor de frequência por 1750
-  reg [8:0]  cnt2;      //conta o número de pontos após o cnt1
-  wire verifica_900us;  // verifica a duração de 9ms = 900us
-  wire verifica_450us;  // verifica a duração de 4.5ms = 450us
+  reg [10:0] cnt1;      // Divide-by-1750 frequency divider
+  reg [8:0]  cnt2;      // counts the number of points after cnt1
+  wire verify_900us;    // verifies the duration of 9ms = 900µs
+  wire verify_450us;    // verifies the duration of 4.5 ms = 450 µs
   
-  //Lógico '1' – uma rajada de pulso de 562,5µs seguida por um espaço de 1,6875ms, com um tempo total de transmissão de 2,25ms
-  wire high;            // verifica  data="1"
-  //Lógico '0' – uma rajada de pulso de 562,5µs seguida por um espaço de 562,5µs, com um tempo total de transmissão de 1,125ms
-  wire low;             // verifica  data="0"
-
- 
-  //----------------------------------------------------------------------------
-  always @ (posedge clk)
-    if (!rst_n) //reset assíncrono
-      cnt1 <= 11'd0; //reinicia o contador 1
-    else if (irda_change) //na transição de borda de irda
-      cnt1 <= 11'd0; //reinicia o contador 1
-    else if (cnt1 == 11'd1750) //caso contador estoure
-      cnt1 <= 11'd0; //reinicia o contador 1
-    else
-      cnt1 <= cnt1 + 1'b1; // incrementa o contador 1
-  //----------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------- 
-  always @ (posedge clk)
-    if (!rst_n) //reset assíncrono
-      cnt2 <= 9'd0; //reinicia o contador 2
-    else if (irda_change) //na transição de borda de irda
-      cnt2 <= 9'd0; //reinicia o contador 2
-    else if (cnt1 == 11'd1750) //1750 pulso nível baixo e 1750 pulsos nível alto
-      cnt2 <= cnt2 +1'b1; //incrementa o contador 2
-   //----------------------------------------------------------------------------
-
-  //Garante a estabilidade avaliando intervalo de contagem inves do valor exato
-  assign verifica_900us = ((217 < cnt2) & (cnt2 < 297));// valor exato esperado 256 
-  assign verifica_450us = ((88 < cnt2) & (cnt2 < 168)); // valor exato esperado 128  
-  assign high = ((38 < cnt2) & (cnt2 < 58));            // valor exato esperado 48
-  assign low  = ((6 < cnt2) & (cnt2 < 26));             // valor exato esperado 16
-
-  //----------------------------------------------------------------------------
-  // Declaração da FSM
-  localparam IDLE_STATE   = 3'b000, //estado inicial
-            ATRASO_900us  = 3'b001, //atraso de 900us
-            ATRASO_450us  = 3'b010, //atrado de 450us
-            DATA_STATE    = 3'b100; //estado de transferência de dados
- 
-  //FSM Lógica para controle do estado atual (sequencial)
-  always @ (posedge clk)
-    if (!rst_n) //reset assíncrono
-      estado_atual <= IDLE_STATE; //reinicia a FSM
-    else
-      estado_atual <= prox_estado; //atualiza o estado atual
+  // Logic '1' – a 562.5 µs pulse burst followed by a 1.6875 ms space, with a total transmission time of 2.25 ms.
+  wire high;            // check date="1"
   
-  //FSM Lógica para controle do estado atual (combinacional)
-  always @ ( * )
-    case (estado_atual)
-      IDLE_STATE://quando no estado inicial
+  // Logic '0' – a 562.5 µs pulse burst followed by a 562.5 µs space, with a total transmission time of 1.125 ms.
+  wire low;             // check date="0"
+
+
+  always @(posedge clk)
+  begin
+    if (!rst_n)                // asynchronous reset
+      cnt1 <= 11'd0;           // resets counter 1
+    else if (irda_change)      // at the IrDA edge transition
+      cnt1 <= 11'd0;           // resets counter 1
+    else if (cnt1 == 11'd1750) // in case the counter overflows
+      cnt1 <= 11'd0;           // resets counter 1
+    else
+      cnt1 <= cnt1 + 1'b1;     // increments the counter by 1
+  end
+
+  always @(posedge clk)
+  begin     
+    if (!rst_n)                // asynchronous reset
+      cnt2 <= 9'd0;            // reset counter 2
+    else if (irda_change)      // at the IrDA edge transition
+      cnt2 <= 9'd0;            // reset counter 2
+    else if (cnt1 == 11'd1750) // 1750 pulses at low level and 1750 pulses at high level
+      cnt2 <= cnt2 +1'b1;      // increments the counter 2
+  end
+
+  // Ensures stability by evaluating the count interval instead of the exact value.
+  assign verify_900us = ((217 < cnt2) & (cnt2 < 297));  // expected exact value 256 
+  assign verify_450us = ((88 < cnt2) & (cnt2 < 168));   // expected exact value 128  
+  assign high = ((38 < cnt2) & (cnt2 < 58));            // expected exact value 48
+  assign low  = ((6 < cnt2) & (cnt2 < 26));             // expected exact value 16
+
+  localparam IDLE_STATE  = 3'b000, // initial state
+             DELAY_900us = 3'b001, // delay of 900us
+             DELAY_450us = 3'b010, // delay of 450us
+             DATA_STATE  = 3'b100; // data transfer state
+ 
+  // FSM logic for current state control (sequential)
+  always @(posedge clk)
+  begin
+    if (!rst_n) // asynchronous reset
+      current_state <= IDLE_STATE; // restarts the FSM
+    else
+      current_state <= next_state; // updates the current state
+  end
+  
+  // FSM Lógica para controle do estado atual (combinacional)
+  always @(*)
+  begin
+    case (current_state)
+      IDLE_STATE:
         if (~irda_reg1)
-          prox_estado = ATRASO_900us; //passa ao estado seguinte
+          next_state = DELAY_900us;
         else 
-          prox_estado = IDLE_STATE; //reinicia a FSM
+          next_state = IDLE_STATE;
    
-      ATRASO_900us: //quando no estado de atraso de 900us
-        if (irda_posedge)
-          begin
-            if (verifica_900us)
-              prox_estado = ATRASO_450us; //passa ao estado seguinte
-            else
-              prox_estado = IDLE_STATE; //reinicia a FSM
-          end
-        else  //previne inferência de latches
-          prox_estado = ATRASO_900us; //permanece no estado atual
+      DELAY_900us:
+        if (irda_posedge) begin
+          if (verify_900us)
+            next_state = DELAY_450us;
+          else
+            next_state = IDLE_STATE;
+        end else  // 
+          next_state = DELAY_900us;
    
-      ATRASO_450us: //quando no estado de atraso de 450us
-        if (irda_negedge)
-          begin
-            if (verifica_450us)
-              prox_estado = DATA_STATE; //passa ao estado seguinte
-            else
-              prox_estado = IDLE_STATE; //reinicia a FSM
-          end
-        else //previne inferência de latches
-          prox_estado = ATRASO_450us; //permanece no estado atual
+      DELAY_450us:
+        if (irda_negedge) begin
+          if (verify_450us)
+            next_state = DATA_STATE;
+          else
+            next_state = IDLE_STATE;
+          end else // prevents latch inference
+            next_state = DELAY_450us;
    
-      DATA_STATE: //quando no estado de transferência de dados
-        if ((data_cnt == 6'd32) & irda_reg2 & irda_reg1) //verifica se recebeu os 32 bits
-          prox_estado = IDLE_STATE; //passa ao estado seguinte
-        else if (error_flag) //caso apresente erro nos dados de irda
-          prox_estado = IDLE_STATE;  //reinicia a FSM
+      DATA_STATE:
+        if ((data_cnt == 6'd32) & irda_reg2 & irda_reg1) // checks if the 32 bits were received
+          next_state = IDLE_STATE;
+        else if (error_flag)       // in case there is an error in the IRDA data
+          next_state = IDLE_STATE;
         else
-          prox_estado = DATA_STATE; //permanece no estado atual
-      default:
-        prox_estado = IDLE_STATE; //recupera de estado inválido, reiniciando a FSM
-    endcase
+          next_state = DATA_STATE;
 
-  //FSM Lógica para controle das saídas
-  always @ (posedge clk)
-    if (!rst_n) //reset assíncrono
-      begin
-        data_cnt <= 6'd0; //reinicia o contador de bits de dados irda
-        get_data <= 32'd0; //limpa os registradores para os 32 bits de dados irda
-        error_flag <= 1'b0; //limpa a flag de erro de dados irda
+      default: next_state = IDLE_STATE;
+    endcase
+  end
+
+  // FSM logic for output control
+  always @(posedge clk)
+  begin
+    if (!rst_n) begin
+      data_cnt <= 6'd0;   // resets the IrDA data bit counter
+      get_data <= 32'd0;  // Clears the registers for the 32 bits of IrDA data.
+      error_flag <= 1'b0; // Clears the IrDA data error flag.
+    end else if (current_state == IDLE_STATE) begin
+      data_cnt <= 6'd0;   // resets the IrDA data bit counter
+      get_data <= 32'd0;  // Clears the registers for the 32 bits of IrDA data.
+      error_flag <= 1'b0; // Clears the IrDA data error flag.
+    end else if (current_state == DATA_STATE) begin
+      if (irda_posedge) begin // checks if it is a rising edge
+        if (!low)             // if it is not a logic low level (logic level 0, 560 µs)
+          error_flag <= 1'b1; // define error flag
+      end else if (irda_negedge) begin // checks if it is a falling edge
+        if (low)                       // in the case of a logic low level (logic level 0, 560 µs)
+          get_data[0] <= 1'b0;
+        else if (high) // if logic high (logic level 1, 1680 µs)
+          get_data[0] <= 1'b1;
+        else
+          error_flag <= 1'b1; // caso contrário, define flag de erro
+
+        get_data[31:1] <= get_data[30:0]; // updates the data register, shifting 1 bit
+        data_cnt <= data_cnt + 1'b1;      // increments the data counter
       end
-    else if (estado_atual == IDLE_STATE) //quando no estado inicial
-      begin
-        data_cnt <= 6'd0; //reinicia o contador de bits de dados irda
-        get_data <= 32'd0; //limpa os registradores para os 32 bits de dados irda
-        error_flag <= 1'b0; //limpa a flag de erro de dados irda
-      end
-    else if (estado_atual == DATA_STATE) //quando no estado de transmissão de dados
-      begin
-        if (irda_posedge)  //verifica se é borda de subida
-          begin
-            if (!low)  //caso não seja nível lógico baixo (nível lógico 0, 560us)
-              error_flag <= 1'b1; //define flag de erro
-          end
-        else if (irda_negedge)  //verifica se é borda de descida
-          begin
-            if (low) //caso seja nível lógico baixo (nível lógico 0, 560us)
-              get_data[0] <= 1'b0;
-            else if (high) //caso seja nível lógico alto (nível lógico 1, 1680us)
-              get_data[0] <= 1'b1;
-            else
-              error_flag <= 1'b1; //caso contrário, define flag de erro
-             
-            get_data[31:1] <= get_data[30:0]; //atualiza o registrador de dados, deslocando 1 bit
-            data_cnt <= data_cnt + 1'b1; //incrementa o contador de dados
-          end
-      end
+    end
+  end
 
   
-  //Lógica para o controle dos displays BCD7SEG ----------------------------
-  always @ (posedge clk)
+  // Logic for controlling BCD7SEG displays ----------------------------
+  always @(posedge clk)
+  begin
     if (!rst_n)
       irda_data <= 16'd0;
-    else if ((data_cnt ==6'd32) & irda_reg1)
-  begin
-    led1 <= get_data[7:0];  //Complemento dos dados
-    led2 <= get_data[15:8]; //Código dos dados
-    led3 <= get_data[23:16];//Código de usuário
-    led4 <= get_data[31:24];
+    else if ((data_cnt ==6'd32) & irda_reg1) begin
+      led1 <= get_data[7:0];   // Data supplementation
+      led2 <= get_data[15:8];  // Data code
+      led3 <= get_data[23:16]; // User code
+      led4 <= get_data[31:24];
+    end
   end
  
-  //Exibe nos display de BCD7SEG a tecla pressionado no controle remoto IR
-  always@(led2) 
+  // Displays the key pressed on the IR remote control on the BCD 7-segment displays.
+  always @(led2) 
   begin
-    case(led2)
-    //código no controle IR : decodificação BCD7SEG
-      8'b01101000: led_db = 8'b1100_0000;  //exibe 0 no display
-      8'b00110000: led_db = 8'b1111_1001;  //exibe 0 no display
-      8'b00011000: led_db = 8'b1010_0100;  //exibe 0 no display
-      8'b01111010: led_db = 8'b1011_0000;  //exibe 0 no display
-      8'b00010000: led_db = 8'b1001_1001;  //exibe 0 no display
-      8'b00111000: led_db = 8'b1001_0010;  //exibe 0 no display
-      8'b01011010: led_db = 8'b1000_0010;  //exibe 0 no display
-      8'b01000010: led_db = 8'b1111_1000;  //exibe 0 no display
-      8'b01001010: led_db = 8'b1000_0000;  //exibe 0 no display
-      8'b01010010: led_db = 8'b1001_0000;  //exibe 0 no display
-		8'b00100010: led_db = 8'b0111_1111;
-		8'b00000010: led_db = 8'b1011_1111;
-      default:     led_db = 8'b1000_1110;  //exibe F no display
-    endcase
-	 
-	 if (led2 == 8'b01101000) begin
-		state <= 2'b11;
-	 end else begin
-		if (led2 == 8'b00110000) begin
-			state <= 2'b01;
+		if (!rst_n) begin
+			// cmd_value <= 8'd0;
+			led_db    <= 8'hFF;
+		end else if (received_packet) begin
+			// cmd_value <= led2;
+		  case(led2)
+		    // IR remote control code: BCD-to-7-segment decoding
+		    8'b01101000: led_db = 8'b1100_0000; // 0 
+		    8'b00110000: led_db = 8'b1111_1001; // 1 
+		    8'b00011000: led_db = 8'b1010_0100; // 2
+		    8'b01111010: led_db = 8'b1011_0000; // 3
+		    8'b00010000: led_db = 8'b1001_1001; // 4
+		    8'b00111000: led_db = 8'b1001_0010; // 5
+		    8'b01011010: led_db = 8'b1000_0010; // 6
+		    8'b01000010: led_db = 8'b1111_1000; // 7
+		    8'b01001010: led_db = 8'b1000_0000; // 8
+		    8'b01010010: led_db = 8'b1001_0000; // 9
+		    8'b00100010: led_db = 8'b0111_1111; // Left
+		    8'b00000010: led_db = 8'b1011_1111; // Right
+		    8'b11000010: led_db = 8'b0011_1111; // Play
+		    default:     led_db = led2;
+		  endcase
 		end
-	 end
-	 
-	 if (led2 == 8'b00100010) begin
-		if (select == 2'd0) begin
-			select <= 2'd3;
-		end else begin
-			select <= select - 1;
-		end
-		end
-		
-	 if (led2 == 8'b00000010) begin
-		if (select == 2'd3) begin
-			select <= 2'd0;
-		end else begin
-			select <= select + 1;
-		end
-		end
-		
+  end
+  
+  always @(posedge clk) 
+  begin
+    if (!rst_n)
+		stop_music <= 1'b0;
+    
+    if (received_packet && (led2 == 8'b11000010))
+      stop_music <= ~stop_music;
+    
+    if (received_packet && (led2 == 8'b00100010) && (stop_music == 1'b1)) begin
+      case (sel)
+        3'b000 : sel <= 3'b100;
+        3'b001 : sel <= 3'b000;
+        3'b010 : sel <= 3'b001;
+        3'b011 : sel <= 3'b010;
+        3'b100 : sel <= 3'b011;
+      endcase
+    end
+    
+    if (received_packet && (led2 == 8'b00000010) && (stop_music == 1'b1)) begin
+      case (sel)
+        3'b000 : sel <= 3'b001;
+        3'b001 : sel <= 3'b010;
+        3'b010 : sel <= 3'b011;
+        3'b011 : sel <= 3'b100;
+        3'b100 : sel <= 3'b000;
+      endcase
+    end
   end
 
 endmodule 
-

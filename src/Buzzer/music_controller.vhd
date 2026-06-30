@@ -10,7 +10,7 @@ entity music_controller is
 		
 		temp_out, freq_out : out std_logic_vector(27 downto 0);
 		
-		selection : in std_logic_vector(1 downto 0)
+		selection : in std_logic_vector(2 downto 0)
 	);
 end entity;
 
@@ -68,9 +68,10 @@ architecture arc of music_controller is
 	constant Fs5 : integer := 16892; -- 1479.98 Hz (Fá#5/Solb5)
 	constant Gs5 : integer := 15049; -- 1661.22 Hz (Sol#5/Láb5)
 	constant As5 : integer := 13407; -- 1864.66 Hz (Lá#5/Sib5)
+	constant Bs5 : integer := 11944; -- 2093.00 Hz (Si#5 = Dó6)
 	
-	-- Zelda constants
-	constant BPM1 : integer := 190; 
+	-- 007 constants
+	constant BPM1 : integer := 140; 
 	constant BPS1 : integer := BPM1 / 60; 
 	constant ov1_t4 : integer := (4 * clk_FPGA) / BPS1; 
 	constant ov1_t3 : integer := (3 * clk_FPGA) / BPS1; 
@@ -79,8 +80,8 @@ architecture arc of music_controller is
 	constant ov1_t1_2 : integer := (clk_FPGA / 2) / BPS1; 
 	constant ov1_t1_4	: integer := (clk_FPGA / 4) / BPS1;
 	
-	-- Take On Me constants
-	constant BPM2 : integer := 200; 
+	-- Indiana Jones constants
+	constant BPM2 : integer := 130; 
 	constant BPS2 : integer := BPM2 / 60; 
 	constant ov2_t4 : integer := (4 * clk_FPGA) / BPS2; 
 	constant ov2_t3 : integer := (3 * clk_FPGA) / BPS2; 
@@ -89,8 +90,8 @@ architecture arc of music_controller is
 	constant ov2_t1_2 : integer := (clk_FPGA / 2) / BPS2; 
 	constant ov2_t1_4	: integer := (clk_FPGA / 4) / BPS2;
 	
-	-- Pokémon constants
-	constant BPM3 : integer := 125; 
+	-- Missão Impossível constants
+	constant BPM3 : integer := 143; 
 	constant BPS3 : integer := BPM3 / 60; 
 	constant ov3_t4 : integer := (4 * clk_FPGA) / BPS3; 
 	constant ov3_t3 : integer := (3 * clk_FPGA) / BPS3; 
@@ -99,8 +100,8 @@ architecture arc of music_controller is
 	constant ov3_t1_2 : integer := (clk_FPGA / 2) / BPS3; 
 	constant ov3_t1_4	: integer := (clk_FPGA / 4) / BPS3;
 	
-	-- My Way constants
-	constant BPM4 : integer := 120; 
+	-- Never Gonna Give You Up constants
+	constant BPM4 : integer := 169; 
 	constant BPS4 : integer := BPM4 / 60; 
 	constant ov4_t4 : integer := (4 * clk_FPGA) / BPS4; 
 	constant ov4_t3 : integer := (3 * clk_FPGA) / BPS4; 
@@ -109,117 +110,160 @@ architecture arc of music_controller is
 	constant ov4_t1_2 : integer := (clk_FPGA / 2) / BPS4; 
 	constant ov4_t1_4	: integer := (clk_FPGA / 4) / BPS4;
 	
+	-- Star Wars - Force Theme constants
+	constant BPM5 : integer := 70; 
+	constant BPS5 : integer := BPM5 / 60; 
+	constant ov5_t4 : integer := (4 * clk_FPGA) / BPS5; 
+	constant ov5_t3 : integer := (3 * clk_FPGA) / BPS5; 
+	constant ov5_t2 : integer := (2 * clk_FPGA) / BPS5; 
+	constant ov5_t1 : integer := clk_FPGA / BPS5; 
+	constant ov5_t1_2 : integer := (clk_FPGA / 2) / BPS5; 
+	constant ov5_t1_4	: integer := (clk_FPGA / 4) / BPS5;
+	
 	-- Scores 
 	type score is record
 		note : integer;
 		time_t : integer;
 	end record;
 
-	type vetor_zelda is array (0 to 41) of score;    -- Zelda - Lost Woods        (42)
-	type vetor_takeonme is array (0 to 32) of score; -- A-ha - Take On Me         (33)
-	type vetor_pokemon is array (0 to 56) of score;  -- Pokemon - Cerulean Theme  (56)
-	type vetor_myway is array (0 to 54) of score;    -- Frank Sinatra - My Way    (54)
+	type vetor_007 is array (0 to 63) of score;       -- 007 - Jamos Bond Theme                (64)
+	type vetor_indjones is array (0 to 35) of score;  -- Indiana Jones - Main Theme            (36)
+	type vetor_mimp is array (0 to 53) of score;      -- Mission Impossible - Main Theme       (54)
+	type vetor_nggyu is array (0 to 48) of score;     -- Rick Astley - Never Gonna Give You Up (49)
+	type vetor_sforce is array (0 to 33) of score;    -- Star Wars - Force Theme               (34)
 	
-	--Take On Me
-	constant music1 : vetor_takeonme := (
-		(note => PAUSE, time_t => ov2_t1_2),
-		(note => Fs4, time_t => ov2_t1_2), (note => Fs4, time_t => ov2_t1_2), (note => D4,  time_t => ov2_t1_2), 
-		(note => B3,  time_t => ov2_t1_2), (note => PAUSE, time_t => ov2_t1_2), (note => B3,  time_t => ov2_t1_2), 
-		(note => PAUSE, time_t => ov2_t1_2), (note => E4,  time_t => ov2_t1_2), (note => PAUSE, time_t => ov2_t1_2),
-		(note => E4,  time_t => ov2_t1_2), (note => PAUSE, time_t => ov2_t1_2), (note => E4,  time_t => ov2_t1_2),
-		(note => Gs4, time_t => ov2_t1_2), (note => Gs4, time_t => ov2_t1_2), (note => A4,  time_t => ov2_t1_2), 
-		(note => B4,  time_t => ov2_t1_2), (note => A4,  time_t => ov2_t1_2), (note => A4,  time_t => ov2_t1_2),
-		(note => A4,  time_t => ov2_t1_2), (note => E4,  time_t => ov2_t1_2), (note => PAUSE, time_t => ov2_t1_2),
-		(note => D4,  time_t => ov2_t1_2), 
-		(note => PAUSE, time_t => ov2_t1_2),
-		(note => Fs4, time_t => ov2_t1_2), (note => PAUSE, time_t => ov2_t1_2), (note => Fs4, time_t => ov2_t1_2),
-		(note => PAUSE, time_t => ov2_t1_2), (note => Fs4, time_t => ov2_t1_2), (note => E4,  time_t => ov2_t1_2),
-		(note => E4,  time_t => ov2_t1_2), (note => Fs4, time_t => ov2_t1_2), (note => E4,  time_t => ov2_t1_2)
+	-- 007 - Jamos Bond Theme
+	constant music1 : vetor_007 := (
+		(note => E4,  time_t => ov1_t1),
+		(note => Fs4, time_t => ov1_t1_2), (note => Fs4, time_t => ov1_t1_2), (note => Fs4, time_t => ov1_t1), 
+		(note => Fs4, time_t => ov1_t2),   (note => E4,  time_t => ov1_t1),   (note => E4,  time_t => ov1_t1), 
+		(note => E4,  time_t => ov1_t1),   (note => E4,  time_t => ov1_t1),   (note => G4,  time_t => ov1_t1_2),
+		(note => G4,  time_t => ov1_t1_2), (note => G4,  time_t => ov1_t1),   (note => G4,  time_t => ov1_t2),
+		(note => Fs4, time_t => ov1_t1),   (note => Fs4, time_t => ov1_t1),   (note => Fs4, time_t => ov1_t1),
+		(note => E4,  time_t => ov1_t1), 
+		(note => Fs4, time_t => ov1_t1_2), (note => Fs4, time_t => ov1_t1_2), (note => Fs4, time_t => ov1_t1), 
+		(note => Fs4, time_t => ov1_t2),   (note => E4,  time_t => ov1_t1),   (note => E4,  time_t => ov1_t1), 
+		(note => E4,  time_t => ov1_t1),   (note => E4,  time_t => ov1_t1),   (note => G4,  time_t => ov1_t1_2), 
+		(note => G4,  time_t => ov1_t1_2), (note => G4,  time_t => ov1_t1),   (note => G4,  time_t => ov1_t2), 
+		(note => Fs4, time_t => ov1_t1),   (note => Fs4, time_t => ov1_t1),   (note => Fs4, time_t => ov1_t1),
+		
+		(note => E5,  time_t => ov1_t1),  
+		(note => Fs5, time_t => ov1_t1_2), (note => Fs5, time_t => ov1_t1_2), (note => Fs5, time_t => ov1_t1), 
+		(note => Fs5, time_t => ov1_t2),   (note => E5,  time_t => ov1_t1),   (note => E5,  time_t => ov1_t1), 
+		(note => E5,  time_t => ov1_t1),   (note => E5,  time_t => ov1_t1),   (note => G5,  time_t => ov1_t1_2),
+		(note => G5,  time_t => ov1_t1_2), (note => G5,  time_t => ov1_t1),   (note => G5,  time_t => ov1_t2),
+		(note => Fs5, time_t => ov1_t1),   (note => Fs5, time_t => ov1_t1),   (note => Fs5, time_t => ov1_t1),
+		(note => E5,  time_t => ov1_t1), 
+		(note => Fs5, time_t => ov1_t1_2), (note => Fs5, time_t => ov1_t1_2), (note => Fs5, time_t => ov1_t1), 
+		(note => Fs5, time_t => ov1_t2),   (note => E5,  time_t => ov1_t1),   (note => E5,  time_t => ov1_t1), 
+		(note => E5,  time_t => ov1_t1),   (note => E5,  time_t => ov1_t1),   (note => G5,  time_t => ov1_t1_2), 
+		(note => G5,  time_t => ov1_t1_2), (note => G5,  time_t => ov1_t1),   (note => G5,  time_t => ov1_t2), 
+		(note => Fs5, time_t => ov1_t1),   (note => Fs5, time_t => ov1_t1),   (note => Fs5, time_t => ov1_t1)
+		);
+		
+	-- Indiana Jones - Main Theme
+	constant music2 : vetor_indjones := (
+		(note => E4, time_t => ov2_t1),   (note => F4, time_t => ov2_t1_2), (note => G4, time_t => ov2_t1),
+		(note => C5, time_t => ov2_t2),   (note => D4,  time_t => ov2_t1),  (note => E4, time_t => ov2_t1_2),
+		(note => F4, time_t => ov2_t2),   (note => G4, time_t => ov2_t1),   (note => A5, time_t => ov2_t1_2),
+		(note => B5, time_t => ov2_t1),   (note => F5,  time_t => ov2_t2),  (note => A5, time_t => ov2_t1),
+		(note => B5, time_t => ov2_t1_2), (note => C5,  time_t => ov2_t1),  (note => D5, time_t => ov2_t1),
+		(note => E5, time_t => ov2_t1),   (note => E4,  time_t => ov2_t1),  (note => F4, time_t => ov2_t1_2),
+		(note => G4, time_t => ov2_t1),   (note => C5, time_t => ov2_t2),   (note => D5, time_t => ov2_t1),
+		(note => E5, time_t => ov2_t1_2), (note => F5,  time_t => ov2_t2),  (note => G4, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t1_2), (note => E5,  time_t => ov2_t2),  (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t1),   (note => E5,  time_t => ov2_t2),  (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t1),   (note => E5, time_t => ov2_t2),   (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t1),   (note => E5,  time_t => ov2_t1),  (note => D5, time_t => ov2_t1)
 	);
 
-	--Pokemon
-	constant music2 : vetor_pokemon := (
-		(note => E4,  time_t => ov3_t1_2), (note => Ds4, time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t1_2),
-		(note => B3,  time_t => ov3_t1_2), (note => A3,  time_t => ov3_t1_2), (note => B3,  time_t => ov3_t1_2),
-		(note => Cs4, time_t => ov3_t1_2), (note => Ds4, time_t => ov3_t1), (note => E4,  time_t => ov3_t1_4),
-		(note => E4,  time_t => ov3_t1_4), (note => B3,  time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t1_2),
-		(note => Ds4, time_t => ov3_t1_4), (note => E4,  time_t => ov3_t1_4), (note => Fs4, time_t => ov3_t1_4),
-		(note => Gs4, time_t => ov3_t1_4), (note => A4,  time_t => ov3_t1), (note => Gs4, time_t => ov3_t1_4),
-		(note => A4,  time_t => ov3_t1_4), (note => Gs4, time_t => ov3_t2), (note => Fs4, time_t => ov3_t1_4),
-		(note => E4,  time_t => ov3_t1_4), (note => B3,  time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t1_2),
-		(note => Ds4, time_t => ov3_t1_4), (note => E4,  time_t => ov3_t1_4), (note => Fs4, time_t => ov3_t1_4),
-		(note => Gs4, time_t => ov3_t1_4), (note => A4,  time_t => ov3_t1), (note => Gs4, time_t => ov3_t1_4),
-		(note => E4,  time_t => ov3_t1_4), (note => Gs4, time_t => ov3_t2), (note => B4,  time_t => ov3_t1_4),
-		(note => E4,  time_t => ov3_t1_4), (note => B3,  time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t1_2),
-		(note => Ds4, time_t => ov3_t1_4), (note => E4,  time_t => ov3_t1_4), (note => Fs4, time_t => ov3_t1_4),
-		(note => Gs4, time_t => ov3_t1_4), (note => A4,  time_t => ov3_t1), (note => Gs4, time_t => ov3_t1_4),
-		(note => A4,  time_t => ov3_t1_4), (note => Gs4, time_t => ov3_t2), (note => Fs4, time_t => ov3_t1_4),
-		(note => E4,  time_t => ov3_t1_4), (note => B3,  time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t1_2), 
-		(note => Ds4, time_t => ov3_t1_4), (note => E4,  time_t => ov3_t1_4), (note => Fs4, time_t => ov3_t1_4), 
-		(note => Gs4, time_t => ov3_t1_4), (note => A4,  time_t => ov3_t1), (note => Gs4, time_t => ov3_t1_4), 
-		(note => E4,  time_t => ov3_t1_4), (note => Gs4, time_t => ov3_t1), (note => B4,  time_t => ov3_t1_2)
+	-- Mission Impossible - Main Theme
+	constant music3 : vetor_mimp := (
+		(note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), (note => As4, time_t => ov3_t1), 
+		(note => C4,  time_t => ov3_t1), (note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), 
+		(note => F3,  time_t => ov3_t1), (note => Fs3, time_t => ov3_t1), (note => G3,  time_t => ov3_t1), 
+		(note => G3,  time_t => ov3_t2), (note => As4, time_t => ov3_t1), (note => C4,  time_t => ov3_t1), 
+		(note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), (note => F3,  time_t => ov3_t1),
+		(note => Fs3, time_t => ov3_t1), 
+		
+		(note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), (note => As5, time_t => ov3_t1), 
+		(note => C5,  time_t => ov3_t1), (note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), 
+		(note => F4,  time_t => ov3_t1), (note => Fs4, time_t => ov3_t1), (note => G4,  time_t => ov3_t1),
+		(note => G4,  time_t => ov3_t2), (note => As5, time_t => ov3_t1), (note => C5,  time_t => ov3_t1), 
+		(note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), (note => F4,  time_t => ov3_t1), 
+		(note => Fs4, time_t => ov3_t1), 
+		
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => D4,  time_t => ov3_t2), 
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t2), 
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => C4,  time_t => ov3_t2), 
+		(note => As4, time_t => ov3_t1_2), (note => C4, time_t => ov3_t1_2), 
+	
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => Fs4, time_t => ov3_t1), 
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => F4,  time_t => ov3_t1), 
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => E4,  time_t => ov3_t1), 
+		(note => Ds4, time_t => ov3_t1_2), (note => D4, time_t => ov3_t1_2)
 	);
 
-	-- My Way
-	constant music3 : vetor_myway := (
-		(note => Fs4, time_t => ov4_t1), (note => G4,  time_t => ov4_t1), 
-		(note => A4,  time_t => ov4_t2), (note => A4,  time_t => ov4_t1_4), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => B4,  time_t => ov4_t1), (note => A4,  time_t => ov4_t1), 
-		(note => Gs4, time_t => ov4_t2), (note => A4,  time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => A4,  time_t => ov4_t1), (note => A4,  time_t => ov4_t1), 
-		(note => B4,  time_t => ov4_t2), (note => B4,  time_t => ov4_t1_2),
-		(note => PAUSE, time_t => ov4_t1),
-		(note => C5,  time_t => ov4_t1), (note => B4,  time_t => ov4_t1), 
-		(note => A4,  time_t => ov4_t2), (note => B4,  time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => B4,  time_t => ov4_t1), (note => Cs5, time_t => ov4_t1), 
-		(note => D5,  time_t => ov4_t2), (note => D5,  time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => B4,  time_t => ov4_t1), (note => D5,  time_t => ov4_t1), 
-		(note => B4,  time_t => ov4_t2), (note => Cs5, time_t => ov4_t1_2),
-		(note => PAUSE, time_t => ov4_t1),
-		(note => Cs5, time_t => ov4_t1), (note => D5,  time_t => ov4_t1), 
-		(note => E5,  time_t => ov4_t2), (note => E5,  time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => Fs5, time_t => ov4_t1), (note => Cs5, time_t => ov4_t1),
-		(note => E5,  time_t => ov4_t2), (note => D5,  time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => B4,  time_t => ov4_t1), (note => Cs4, time_t => ov4_t1), 
-		(note => D5,  time_t => ov4_t2), (note => D5,  time_t => ov4_t1_2),
-		(note => PAUSE, time_t => ov4_t1),
-		(note => B4,  time_t => ov4_t1), (note => D5,  time_t => ov4_t1), 
-		(note => B4,  time_t => ov4_t2), (note => Cs5, time_t => ov4_t1_2), 
-		(note => PAUSE, time_t => ov4_t1),
-		(note => Cs5, time_t => ov4_t1), (note => D5,  time_t => ov4_t1),
-		(note => E5,  time_t => ov4_t2), (note => E5,  time_t => ov4_t2), 
-		(note => D5,  time_t => ov4_t1)
+	--Rick Astley - Never Gonna Give You Up
+	constant music4 : vetor_nggyu := (
+		(note => Gs4, time_t => ov4_t1_2), (note => As5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
+		(note => Bs5, time_t => ov4_t1_2), (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t1), 
+		(note => Ds5, time_t => ov4_t2),
+		
+		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
+		(note => Bs5, time_t => ov4_t1_2), (note => Ds5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t1), 
+		(note => Cs5, time_t => ov4_t2), 
+	
+		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
+		(note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t1), 
+		(note => C5,  time_t => ov4_t2),   (note => Gs4, time_t => ov4_t2),
+		
+		(note => Gs4, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2),   (note => Cs5, time_t => ov4_t3),
+		
+		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2),
+		(note => Bs5, time_t => ov4_t1_2), (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t1), 
+		(note => Ds5, time_t => ov4_t2), 
+		
+		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
+		(note => Bs5, time_t => ov4_t1_2), (note => Gs5, time_t => ov4_t2),   (note => F5,  time_t => ov4_t1), 
+		(note => Fs5, time_t => ov4_t3),  
+		
+		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2),
+		(note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t1),
+		(note => C5,  time_t => ov4_t3),   (note => Gs4, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2),
+		(note => Cs5, time_t => ov4_t3) 
 	);
-
-	--Zelda
-	constant music4 : vetor_zelda := (
-		(note => PAUSE, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1), 
-		(note => E5, time_t => ov1_t1), (note => D5, time_t => ov1_t1), (note => B4, time_t => ov1_t1), 
-		(note => C5, time_t => ov1_t1), (note => B4, time_t => ov1_t1), (note => G4, time_t => ov1_t2), 
-		(note => E4, time_t => ov1_t1), (note => D4, time_t => ov1_t1), (note => E4, time_t => ov1_t1), 
-		(note => G4, time_t => ov1_t2), (note => E4, time_t => ov1_t1_2), 
-		(note => PAUSE, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1),
-		(note => F4, time_t => ov1_t1), (note => A4, time_t => ov1_t1), (note => B4, time_t => ov1_t1), 
-		(note => E5, time_t => ov1_t1), (note => D5, time_t => ov1_t1), (note => B4, time_t => ov1_t1), 
-		(note => C5, time_t => ov1_t1), (note => E5, time_t => ov1_t1), (note => B4, time_t => ov1_t2), 
-		(note => G4, time_t => ov1_t1), (note => B4, time_t => ov1_t1), (note => G4, time_t => ov1_t1), 
-		(note => D4, time_t => ov1_t2), (note => E4, time_t => ov1_t1)
+	
+	--Star Wars - Force Theme
+	constant music5 : vetor_sforce := (
+		(note => G3, time_t => ov5_t1_2), (note => C4, time_t => ov5_t1_2), 
+		
+		(note => D4,  time_t => ov5_t2), (note => Ds4, time_t => ov5_t1), (note => F4, time_t => ov5_t1), 
+		(note => Ds4, time_t => ov5_t1), (note => G3, time_t => ov5_t1),
+		
+		(note => G3,  time_t => ov5_t2), (note => C4, time_t => ov5_t1),
+		
+		(note => D4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1), (note => G3, time_t => ov5_t1), 
+		(note => Ds4, time_t => ov5_t1), (note => C4, time_t => ov5_t1), (note => G4, time_t => ov5_t1), 
+		(note => F4,  time_t => ov5_t2), 
+		
+		(note => G3,  time_t => ov5_t1), (note => C4, time_t => ov5_t1), 
+		
+		(note => D4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1), (note => C4, time_t => ov5_t1_2),
+		(note => G4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1_2), (note => C5, time_t => ov5_t2),
+		
+		(note => C4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1), (note => D4, time_t => ov5_t1),
+		(note => C4,  time_t => ov5_t1_2), (note => G4,  time_t => ov5_t2), 
+		
+		(note => Ds4, time_t => ov5_t1_2), (note => C4, time_t => ov5_t1), (note => G3, time_t => ov5_t2), 
+		
+		(note => G3,  time_t => ov5_t2), (note => D4,  time_t => ov5_t1) 
 	);
+	
 	--FSM
 	signal current_state : integer range 0 to 41 := 0; --Zelda - Lost Woods
 	signal next1         : integer range 0 to 32 := 0; --A-ha - Take On Me
-	signal current_music : std_logic_vector(1 downto 0) := "00";
+	signal current_music : std_logic_vector(2 downto 0) := "000";
 	
 begin
 	L1: process(clk_in)
@@ -235,10 +279,12 @@ begin
  	begin
   		-- Select the vector limit according to the music.
   		case selection is
-    		when "00" => limit := 32; -- A-ha - Take On Me
-    		when "01" => limit := 56; -- Pokemon - Cerulean Theme
-    		when "10" => limit := 54; -- Frank Sinatra - My Way
-    		when "11" => limit := 41; -- Zelda - Lost Woods
+    		when "000" => limit := 63; -- 007 - Jamos Bond Theme
+    		when "001" => limit := 35; -- Indiana Jones - Main Theme 
+    		when "010" => limit := 53; -- Mission Impossible - Main Theme
+    		when "011" => limit := 48; -- Rick Astley - Never Gonna Give You Up
+			when "100" => limit := 33; -- Star Wars - Force Them
+			when others => limit := 63;
 		end case;
 	
 		if selection /= current_music then
@@ -265,14 +311,16 @@ begin
 			 	note(PAUSE, 0);  -- buzzer stopped
 			else
 				case selection is
-				when "00" =>
+				when "000" =>
 				    note(music1(current_state).note, music1(current_state).time_t);
-				when "01" =>
+				when "001" =>
 				    note(music2(current_state).note, music2(current_state).time_t);
-				when "10" =>
+				when "010" =>
 				    note(music3(current_state).note, music3(current_state).time_t);
-				when OTHERS =>
+				when "011" =>
 				    note(music4(current_state).note, music4(current_state).time_t);
+				when others =>
+					note(music5(current_state).note, music5(current_state).time_t);
 				end case;
 			end if;
 		end if;

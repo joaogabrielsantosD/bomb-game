@@ -14,7 +14,7 @@ entity lcd_controller is
 	);
   
 	port(
-		clk        : in   std_logic; 						  -- main clock
+		clk        : in   std_logic; 						    -- main clock
 		reset_n    : in   std_logic;                     -- active-low, resets the LCD
 		lcd_enable : in   std_logic;                     -- holds data in the LCD controller
 		lcd_bus    : in   std_logic_vector(9 downto 0);  -- (9) rs (8) rw (7..0) char data
