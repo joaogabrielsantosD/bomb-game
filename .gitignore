@@ -20,5 +20,5 @@ src/**/*.v.bak
 
 # Documentation
 docs/*
-!docs/*.png
+!docs/subtop_test.png
 !output/README.md

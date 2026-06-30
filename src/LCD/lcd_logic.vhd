@@ -10,6 +10,14 @@ entity lcd_logic is
 		music      : in  std_logic_vector (2 downto 0); -- For five songs
 		music_stop : in  std_logic;
 		
+		game_mode  : in std_logic_vector (1 downto 0);
+		
+		record_ten : in std_logic_vector (3 downto 0);
+		record_uni : in std_logic_vector (3 downto 0);
+		
+		points_ten : in std_logic_vector (3 downto 0);
+		points_uni : in std_logic_vector (3 downto 0);
+		
 		lcd_e 	: out std_logic;  -- Holds data in the LCD controller
 		lcd_bar	: out std_logic_vector (9 downto 0)  -- (9) rs (8) rw (7..0) char data
 	);
@@ -31,20 +39,29 @@ architecture bhv of lcd_logic is
 	constant music_4 : std_logic_vector (111 downto 0) := to_std_logic_vector("Never Gonna Di");
 	constant music_5 : std_logic_vector (111 downto 0) := to_std_logic_vector("  Star Wars   ");
 	
-	constant additional_1 : std_logic_vector (127 downto 0) := to_std_logic_vector("                ");
-	constant additional_2 : std_logic_vector (127 downto 0) := to_std_logic_vector("                ");
-	constant additional_3 : std_logic_vector (127 downto 0) := to_std_logic_vector("                ");
-	constant additional_4 : std_logic_vector (127 downto 0) := to_std_logic_vector("                ");
-	constant additional_5 : std_logic_vector (127 downto 0) := to_std_logic_vector("                ");
+	constant additional : std_logic_vector (79 downto 0) := to_std_logic_vector("          ");
+	
+	constant menu : std_logic_vector (23 downto 0) := to_std_logic_vector("Mo:");
 	
 	constant two_points   : std_logic_vector (7 downto 0)   := x"3A";         -- ASCII for ':'
 	constant play         : std_logic_vector (15 downto 0)  := x"3E" & x"20"; -- ASCII for '>'
 	constant pause        : std_logic_vector (15 downto 0)  := x"FF" & x"20"; -- full block
 	constant stop         : std_logic_vector (15 downto 0)  := x"3D" & x"20"; -- '='
+
+	constant test1    : std_logic_vector (23 downto 0) := to_std_logic_vector("t1 ");
+	constant test2    : std_logic_vector (23 downto 0) := to_std_logic_vector("t2 ");
+	constant start_g  : std_logic_vector (23 downto 0) := to_std_logic_vector("gm ");
+	constant record_g : std_logic_vector (23 downto 0) := to_std_logic_vector("Re:");
+	constant points_g : std_logic_vector (15 downto 0) := to_std_logic_vector("P:");
+	
+	signal record_p : std_logic_vector (15 downto 0);
+	signal points_p : std_logic_vector (15 downto 0);
 	
 	--constant controles    : std_logic_vector (23 downto 0) := play & pause & stop;
 	signal current_time   : std_logic_vector (55 downto 0);
 	signal control_status : std_logic_vector (15 downto 0);
+	
+	signal current_game_mode : std_logic_vector (23 downto 0);
 	
 	
 begin
@@ -52,32 +69,38 @@ begin
 	lcd_e   <= lcd_enable;
 	lcd_bar <= lcd_bus; 
 	
+	record_p <= "0011" & record_ten & "0011" & record_uni;
+	points_p <= "0011" & points_ten & "0011" & points_uni;
+	
 	control_status <= stop when music_stop = '1' else play; 
+	
+	with game_mode select
+		current_game_mode <= test1   when "00",
+									test2   when "01",
+									start_g when "10",
+									start_g when others;
 
 	process(music, control_status, current_time) 
    begin
       case music is
 			when "000" => 
 				L1 <= control_status & music_1;
-				L2 <= additional_1;
 			when "001" => 
             L1 <= control_status & music_2;
-            L2 <= additional_2;
 			when "010" => 
             L1 <= control_status & music_3;
-            L2 <= additional_3;
 			when "011" => 
             L1 <= control_status & music_4;
-            L2 <= additional_4;
          when "100" =>
 				L1 <= control_status & music_5;
-				L2 <= additional_5;
 			when others => 
 				L1 <= (others => '0');
 				L2 <= (others => '0');
       end case;
+		
+		L2 <= menu & current_game_mode & record_g & record_p & x"20" & points_g & points_p;
    end process;
-	 
+	
 	-- Sequencing of each character transmission from L1 and L2
 	process(clk)
 		variable char  :  integer range 0 to 34 := 0; --6 bits

@@ -5,6 +5,7 @@ module ir_protocol (
   output reg [3:0] led_cs,
   output reg [7:0] led_db,
   output reg [2:0] sel,
+  output reg [1:0] mode,
   output reg stop_music
 );
   
@@ -211,9 +212,9 @@ module ir_protocol (
 		    8'b01000010: led_db = 8'b1111_1000; // 7
 		    8'b01001010: led_db = 8'b1000_0000; // 8
 		    8'b01010010: led_db = 8'b1001_0000; // 9
-		    8'b00100010: led_db = 8'b0111_1111; // Left
-		    8'b00000010: led_db = 8'b1011_1111; // Right
-		    8'b11000010: led_db = 8'b0011_1111; // Play
+//		    8'b00100010: led_db = 8'b0111_1111; // Left
+//		    8'b00000010: led_db = 8'b1011_1111; // Right
+//		    8'b11000010: led_db = 8'b0011_1111; // Play
 		    default:     led_db = led2;
 		  endcase
 		end
@@ -246,6 +247,13 @@ module ir_protocol (
         3'b100 : sel <= 3'b000;
       endcase
     end
+	 
+	 if (received_packet && (led2 == 8'b10100010))
+		mode <= 2'b00;
+	 if (received_packet && (led2 == 8'b01100010))
+		mode <= 2'b01;
+	 if (received_packet && (led2 == 8'b11100010))
+		mode <= 2'b10;
   end
 
 endmodule 
