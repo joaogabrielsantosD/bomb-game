@@ -5,12 +5,15 @@ output_files/**/*
 simulation/**/*
 db/*
 incremental_db/*
+serv_req_info.txt
 
 # venv
 .venv/*
 
 src/*.bak
+src/*.v.bak
 src/**/*.bak
+src/**/*.v.bak
 # *.qsf
 # *.qpf
 *.qws
