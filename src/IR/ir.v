@@ -6,9 +6,38 @@ module ir_protocol (
   output reg [7:0] led_db,
   output reg [2:0] sel,
   output reg [1:0] mode,
-  output reg stop_music
+  output reg stop_music,
+
+  output wire up_movement,
+  output wire down_movement,
+  output wire left_movement,
+  output wire right_movement
 );
   
+  localparam CMD_0 = 8'b01101000;
+  localparam CMD_1 = 8'b00110000;
+  localparam CMD_2 = 8'b00011000;
+  localparam CMD_3 = 8'b01111010;
+  localparam CMD_4 = 8'b00010000;
+  localparam CMD_5 = 8'b00111000;
+  localparam CMD_6 = 8'b01011010;
+  localparam CMD_7 = 8'b01000010;
+  localparam CMD_8 = 8'b01001010;
+  localparam CMD_9 = 8'b01010010;
+
+  localparam CMD_UP    = CMD_2;
+  localparam CMD_DOWN  = CMD_8;
+  localparam CMD_LEFT  = CMD_4;
+  localparam CMD_RIGHT = CMD_6;
+
+  localparam CMD_SKIP_LEFT  = 8'b00100010;
+  localparam CMD_SKIP_RIGHT = 8'b00000010;
+  localparam CMD_PLAY       = 8'b11000010;
+
+  localparam CMD_TEST1 = 8'b10100010;
+  localparam CMD_TEST2 = 8'b01100010;
+  localparam CMD_GAME  = 8'b11100010;
+
   reg [7:0]  led1, led2, led3, led4;    // represents each 7-segment display
   reg [15:0] irda_data;                 // stores the IrDA data and then sends it to the 7-segment displays
   reg [31:0] get_data;                  // stores the 32 bits of IrDA data
@@ -202,16 +231,16 @@ module ir_protocol (
 			// cmd_value <= led2;
 		  case(led2)
 		    // IR remote control code: BCD-to-7-segment decoding
-		    8'b01101000: led_db = 8'b1100_0000; // 0 
-		    8'b00110000: led_db = 8'b1111_1001; // 1 
-		    8'b00011000: led_db = 8'b1010_0100; // 2
-		    8'b01111010: led_db = 8'b1011_0000; // 3
-		    8'b00010000: led_db = 8'b1001_1001; // 4
-		    8'b00111000: led_db = 8'b1001_0010; // 5
-		    8'b01011010: led_db = 8'b1000_0010; // 6
-		    8'b01000010: led_db = 8'b1111_1000; // 7
-		    8'b01001010: led_db = 8'b1000_0000; // 8
-		    8'b01010010: led_db = 8'b1001_0000; // 9
+		    CMD_0: led_db = 8'b1100_0000; // 0 
+		    CMD_1: led_db = 8'b1111_1001; // 1 
+		    CMD_2: led_db = 8'b1010_0100; // 2
+		    CMD_3: led_db = 8'b1011_0000; // 3
+		    CMD_4: led_db = 8'b1001_1001; // 4
+		    CMD_5: led_db = 8'b1001_0010; // 5
+		    CMD_6: led_db = 8'b1000_0010; // 6
+		    CMD_7: led_db = 8'b1111_1000; // 7
+		    CMD_8: led_db = 8'b1000_0000; // 8
+		    CMD_9: led_db = 8'b1001_0000; // 9
 //		    8'b00100010: led_db = 8'b0111_1111; // Left
 //		    8'b00000010: led_db = 8'b1011_1111; // Right
 //		    8'b11000010: led_db = 8'b0011_1111; // Play
@@ -225,10 +254,10 @@ module ir_protocol (
     if (!rst_n)
 		stop_music <= 1'b0;
     
-    if (received_packet && (led2 == 8'b11000010))
+    if (received_packet && (led2 == CMD_PLAY))
       stop_music <= ~stop_music;
     
-    if (received_packet && (led2 == 8'b00100010) && (stop_music == 1'b1)) begin
+    if (received_packet && (led2 == CMD_SKIP_LEFT) && (stop_music == 1'b1)) begin
       case (sel)
         3'b000 : sel <= 3'b100;
         3'b001 : sel <= 3'b000;
@@ -238,7 +267,7 @@ module ir_protocol (
       endcase
     end
     
-    if (received_packet && (led2 == 8'b00000010) && (stop_music == 1'b1)) begin
+    if (received_packet && (led2 == CMD_SKIP_RIGHT) && (stop_music == 1'b1)) begin
       case (sel)
         3'b000 : sel <= 3'b001;
         3'b001 : sel <= 3'b010;
@@ -248,12 +277,17 @@ module ir_protocol (
       endcase
     end
 	 
-	 if (received_packet && (led2 == 8'b10100010))
-		mode <= 2'b00;
-	 if (received_packet && (led2 == 8'b01100010))
-		mode <= 2'b01;
-	 if (received_packet && (led2 == 8'b11100010))
-		mode <= 2'b10;
+	  if (received_packet && (led2 == CMD_TEST1))
+		  mode <= 2'b00;
+	  if (received_packet && (led2 == CMD_TEST2))
+		  mode <= 2'b01;
+	  if (received_packet && (led2 == CMD_GAME))
+		  mode <= 2'b10;
   end
+
+  assign up_movement    = led2 == CMD_UP;
+  assign down_movement  = led2 == CMD_DOWN;
+  assign left_movement  = led2 == CMD_LEFT;
+  assign right_movement = led2 == CMD_RIGHT;
 
 endmodule 

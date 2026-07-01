@@ -1,7 +1,6 @@
 `include "VgaUtils.v"
 
-module VgaController 
-(
+module VgaController (
    input  wire       clk,
    input  wire [2:0] rgb_in,
    output wire [2:0] rgb_out,

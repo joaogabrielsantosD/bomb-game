@@ -16,6 +16,8 @@ module top (
 	output vsync
 );
 
+	wire up, down, left, right;
+
 	wire h_sync;
 	wire v_sync;
 
@@ -27,7 +29,11 @@ module top (
 		.led_db(seg),	
 		.sel(music_sel),
 		.mode(game_mode),
-		.stop_music(stop_music)
+		.stop_music(stop_music),
+		.up_movement(up),
+		.down_movement(down),
+		.left_movement(left),
+		.right_movement(right)
 	);
 	
 	Game game_inst (
@@ -35,7 +41,11 @@ module top (
 		.rgb(vga_rgb),
 		.h_sync(h_sync),
 		.v_sync(v_sync),
-		.game_mode(game_mode)
+		.game_mode(game_mode),
+		.up(up),
+		.down(down),
+		.left(left),
+		.right(right)
 	);
 	
 	assign hsync = h_sync;

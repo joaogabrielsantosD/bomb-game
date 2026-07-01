@@ -13,7 +13,7 @@ entity lcd_controller is
 		shift          :  std_logic  := '0'    -- shift on/off (0 = off, 1 = on)
 	);
   
-	port(
+	port (
 		clk        : in   std_logic; 						    -- main clock
 		reset_n    : in   std_logic;                     -- active-low, resets the LCD
 		lcd_enable : in   std_logic;                     -- holds data in the LCD controller
