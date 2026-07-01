@@ -24,9 +24,11 @@
 `define VDATA_END   514
 `define VLINE_END   524
 
+`define H_SIZE      (640)
 `define H_EIGHTH    (640 / 8)
 `define H_HALF      (640 / 2)
 `define H_QUARTER   (640 / 4)
+`define V_SIZE      (480)
 `define V_EIGHTH    (480 / 8)
 `define V_HALF      (480 / 2)
 `define V_QUARTER   (480 / 4)

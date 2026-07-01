@@ -163,101 +163,101 @@ architecture arc of music_controller is
 		
 	-- Indiana Jones - Main Theme
 	constant music2 : vetor_indjones := (
-		(note => E4, time_t => ov2_t1),   (note => F4, time_t => ov2_t1_2), (note => G4, time_t => ov2_t1),
-		(note => C5, time_t => ov2_t2),   (note => D4,  time_t => ov2_t1),  (note => E4, time_t => ov2_t1_2),
-		(note => F4, time_t => ov2_t2),   (note => G4, time_t => ov2_t1),   (note => A5, time_t => ov2_t1_2),
-		(note => B5, time_t => ov2_t1),   (note => F5,  time_t => ov2_t2),  (note => A5, time_t => ov2_t1),
-		(note => B5, time_t => ov2_t1_2), (note => C5,  time_t => ov2_t1),  (note => D5, time_t => ov2_t1),
-		(note => E5, time_t => ov2_t1),   (note => E4,  time_t => ov2_t1),  (note => F4, time_t => ov2_t1_2),
-		(note => G4, time_t => ov2_t1),   (note => C5, time_t => ov2_t2),   (note => D5, time_t => ov2_t1),
-		(note => E5, time_t => ov2_t1_2), (note => F5,  time_t => ov2_t2),  (note => G4, time_t => ov2_t1),
-		(note => G4, time_t => ov2_t1_2), (note => E5,  time_t => ov2_t2),  (note => D5, time_t => ov2_t1),
-		(note => G4, time_t => ov2_t1),   (note => E5,  time_t => ov2_t2),  (note => D5, time_t => ov2_t1),
-		(note => G4, time_t => ov2_t1),   (note => E5, time_t => ov2_t2),   (note => D5, time_t => ov2_t1),
-		(note => G4, time_t => ov2_t1),   (note => E5,  time_t => ov2_t1),  (note => D5, time_t => ov2_t1)
+		(note => E4, time_t => ov2_t1_2), (note => F4, time_t => ov2_t1),   (note => G4, time_t => ov2_t2),
+		(note => C5, time_t => ov2_t1),   (note => D4, time_t => ov2_t1_2), (note => E4, time_t => ov2_t2),
+		(note => F4, time_t => ov2_t1),   (note => G4, time_t => ov2_t1_2), (note => A5, time_t => ov2_t1),
+		(note => B5, time_t => ov2_t2),   (note => F5, time_t => ov2_t1),   (note => A5, time_t => ov2_t1_2),
+		(note => B5, time_t => ov2_t1),   (note => C5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1),
+		(note => E5, time_t => ov2_t1),   (note => E4, time_t => ov2_t1_2), (note => F4, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t2),   (note => C5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1_2),
+		(note => E5, time_t => ov2_t2),   (note => F5, time_t => ov2_t1),   (note => G4, time_t => ov2_t1_2),
+		(note => G4, time_t => ov2_t2),   (note => E5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t2),   (note => E5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t2),   (note => E5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1),
+		(note => G4, time_t => ov2_t1),   (note => E5, time_t => ov2_t1),   (note => D5, time_t => ov2_t1)
 	);
 
 	-- Mission Impossible - Main Theme
 	constant music3 : vetor_mimp := (
-		(note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), (note => As4, time_t => ov3_t1), 
-		(note => C4,  time_t => ov3_t1), (note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), 
-		(note => F3,  time_t => ov3_t1), (note => Fs3, time_t => ov3_t1), (note => G3,  time_t => ov3_t1), 
-		(note => G3,  time_t => ov3_t2), (note => As4, time_t => ov3_t1), (note => C4,  time_t => ov3_t1), 
-		(note => G3,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), (note => F3,  time_t => ov3_t1),
+		(note => G3,  time_t => ov3_t2), (note => G3,  time_t => ov3_t1), (note => As4, time_t => ov3_t1), 
+		(note => C4,  time_t => ov3_t1), (note => G3,  time_t => ov3_t2), (note => G3,  time_t => ov3_t1), 
+		(note => F3,  time_t => ov3_t1), (note => Fs3, time_t => ov3_t1), (note => G3,  time_t => ov3_t2), 
+		(note => G3,  time_t => ov3_t1), (note => As4, time_t => ov3_t1), (note => C4,  time_t => ov3_t1), 
+		(note => G3,  time_t => ov3_t2), (note => G3,  time_t => ov3_t1), (note => F3,  time_t => ov3_t1),
 		(note => Fs3, time_t => ov3_t1), 
 		
-		(note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), (note => As5, time_t => ov3_t1), 
-		(note => C5,  time_t => ov3_t1), (note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), 
-		(note => F4,  time_t => ov3_t1), (note => Fs4, time_t => ov3_t1), (note => G4,  time_t => ov3_t1),
-		(note => G4,  time_t => ov3_t2), (note => As5, time_t => ov3_t1), (note => C5,  time_t => ov3_t1), 
-		(note => G4,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), (note => F4,  time_t => ov3_t1), 
-		(note => Fs4, time_t => ov3_t1), 
+		(note => G4,  time_t => ov3_t2), (note => G4,  time_t => ov3_t1), (note => As5, time_t => ov3_t1), 
+		(note => C5,  time_t => ov3_t1), (note => G4,  time_t => ov3_t2), (note => G4,  time_t => ov3_t1), 
+		(note => F4,  time_t => ov3_t1), (note => Fs4, time_t => ov3_t1), (note => G4,  time_t => ov3_t2),
+		(note => G4,  time_t => ov3_t1), (note => As5, time_t => ov3_t1), (note => C5,  time_t => ov3_t1), 
+		(note => G4,  time_t => ov3_t2), (note => G4,  time_t => ov3_t1), (note => F4,  time_t => ov3_t1), 
+		(note => Fs4, time_t => ov3_t1_2), 
 		
-		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => D4,  time_t => ov3_t2), 
-		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => Cs4, time_t => ov3_t2), 
-		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t1_2), (note => C4,  time_t => ov3_t2), 
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t2), (note => D4,  time_t => ov3_t1_2), 
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t2), (note => Cs4, time_t => ov3_t1_2), 
+		(note => As5, time_t => ov3_t1_2), (note => G4, time_t => ov3_t2), (note => C4,  time_t => ov3_t1_2), 
 		(note => As4, time_t => ov3_t1_2), (note => C4, time_t => ov3_t1_2), 
 	
-		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => Fs4, time_t => ov3_t1), 
-		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => F4,  time_t => ov3_t1), 
-		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1_2), (note => E4,  time_t => ov3_t1), 
-		(note => Ds4, time_t => ov3_t1_2), (note => D4, time_t => ov3_t1_2)
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1), (note => Fs4, time_t => ov3_t1_2), 
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1), (note => F4,  time_t => ov3_t1_2), 
+		(note => As4, time_t => ov3_t1_2), (note => G3, time_t => ov3_t1), (note => E4,  time_t => ov3_t1_2), 
+		(note => Ds4, time_t => ov3_t1_2), (note => D4, time_t => ov3_t1)
 	);
 
 	--Rick Astley - Never Gonna Give You Up
 	constant music4 : vetor_nggyu := (
 		(note => Gs4, time_t => ov4_t1_2), (note => As5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
-		(note => Bs5, time_t => ov4_t1_2), (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t1), 
-		(note => Ds5, time_t => ov4_t2),
+		(note => Bs5, time_t => ov4_t1),   (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t2), 
+		(note => Ds5, time_t => ov4_t1_2),
 		
 		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
-		(note => Bs5, time_t => ov4_t1_2), (note => Ds5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t1), 
-		(note => Cs5, time_t => ov4_t2), 
+		(note => Bs5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2), 
+		(note => Cs5, time_t => ov4_t1_2), 
 	
 		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
-		(note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t1), 
-		(note => C5,  time_t => ov4_t2),   (note => Gs4, time_t => ov4_t2),
+		(note => Bs5, time_t => ov4_t2),   (note => Cs5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2), 
+		(note => C5,  time_t => ov4_t2),   (note => Gs4, time_t => ov4_t1),
 		
-		(note => Gs4, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2),   (note => Cs5, time_t => ov4_t3),
+		(note => Gs4, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t3),   (note => Cs5, time_t => ov4_t1_2),
 		
 		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2),
-		(note => Bs5, time_t => ov4_t1_2), (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t1), 
-		(note => Ds5, time_t => ov4_t2), 
+		(note => Bs5, time_t => ov4_t1),   (note => F5,  time_t => ov4_t1),   (note => F5,  time_t => ov4_t2), 
+		(note => Ds5, time_t => ov4_t1_2), 
 		
 		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2), 
-		(note => Bs5, time_t => ov4_t1_2), (note => Gs5, time_t => ov4_t2),   (note => F5,  time_t => ov4_t1), 
-		(note => Fs5, time_t => ov4_t3),  
+		(note => Bs5, time_t => ov4_t2),   (note => Gs5, time_t => ov4_t1),   (note => F5,  time_t => ov4_t3), 
+		(note => Fs5, time_t => ov4_t1_2),  
 		
 		(note => Gs4, time_t => ov4_t1_2), (note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t1_2),
-		(note => Bs5, time_t => ov4_t1_2), (note => Cs5, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t1),
-		(note => C5,  time_t => ov4_t3),   (note => Gs4, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t2),
-		(note => Cs5, time_t => ov4_t3) 
+		(note => Bs5, time_t => ov4_t2),   (note => Cs5, time_t => ov4_t1),   (note => Ds5, time_t => ov4_t3),
+		(note => C5,  time_t => ov4_t1),   (note => Gs4, time_t => ov4_t2),   (note => Ds5, time_t => ov4_t3),
+		(note => Cs5, time_t => ov4_t1_2) 
 	);
 	
 	--Star Wars - Force Theme
 	constant music5 : vetor_sforce := (
-		(note => G3, time_t => ov5_t1_2), (note => C4, time_t => ov5_t1_2), 
+		(note => G3, time_t => ov5_t1_2),  (note => C4, time_t => ov5_t2), 
 		
-		(note => D4,  time_t => ov5_t2), (note => Ds4, time_t => ov5_t1), (note => F4, time_t => ov5_t1), 
-		(note => Ds4, time_t => ov5_t1), (note => G3, time_t => ov5_t1),
+		(note => D4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1),  (note => F4, time_t => ov5_t1), 
+		(note => Ds4, time_t => ov5_t1),   (note => G3, time_t => ov5_t2),
 		
-		(note => G3,  time_t => ov5_t2), (note => C4, time_t => ov5_t1),
+		(note => G3,  time_t => ov5_t1),   (note => C4, time_t => ov5_t1),
 		
-		(note => D4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1), (note => G3, time_t => ov5_t1), 
-		(note => Ds4, time_t => ov5_t1), (note => C4, time_t => ov5_t1), (note => G4, time_t => ov5_t1), 
-		(note => F4,  time_t => ov5_t2), 
+		(note => D4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1),   (note => G3, time_t => ov5_t1), 
+		(note => Ds4, time_t => ov5_t1),   (note => C4, time_t => ov5_t1),    (note => G4, time_t => ov5_t2), 
+		(note => F4,  time_t => ov5_t1),   
 		
-		(note => G3,  time_t => ov5_t1), (note => C4, time_t => ov5_t1), 
+		(note => G3,  time_t => ov5_t1),   (note => C4, time_t => ov5_t1), 
 		
-		(note => D4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1), (note => C4, time_t => ov5_t1_2),
-		(note => G4,  time_t => ov5_t1), (note => Ds4, time_t => ov5_t1_2), (note => C5, time_t => ov5_t2),
+		(note => D4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1_2), (note => C4, time_t => ov5_t1),
+		(note => G4,  time_t => ov5_t1_2), (note => Ds4, time_t => ov5_t2),   (note => C5, time_t => ov5_t1),
 		
-		(note => C4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1), (note => D4, time_t => ov5_t1),
-		(note => C4,  time_t => ov5_t1_2), (note => G4,  time_t => ov5_t2), 
+		(note => C4,  time_t => ov5_t1),   (note => Ds4, time_t => ov5_t1),   (note => D4, time_t => ov5_t1_2),
+		(note => C4,  time_t => ov5_t2),   (note => G4,  time_t => ov5_t1_2), 
 		
-		(note => Ds4, time_t => ov5_t1_2), (note => C4, time_t => ov5_t1), (note => G3, time_t => ov5_t2), 
+		(note => Ds4, time_t => ov5_t1),   (note => C4, time_t => ov5_t2),    (note => G3, time_t => ov5_t2), 
 		
-		(note => G3,  time_t => ov5_t2), (note => D4,  time_t => ov5_t1) 
+		(note => G3,  time_t => ov5_t1),   (note => D4,  time_t => ov5_t1_2) 
 	);
 	
 	--FSM

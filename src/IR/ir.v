@@ -11,7 +11,9 @@ module ir_protocol (
   output wire up_movement,
   output wire down_movement,
   output wire left_movement,
-  output wire right_movement
+  output wire right_movement,
+  
+  output wire check_bomb_cmd
 );
   
   localparam CMD_0 = 8'b01101000;
@@ -37,6 +39,8 @@ module ir_protocol (
   localparam CMD_TEST1 = 8'b10100010;
   localparam CMD_TEST2 = 8'b01100010;
   localparam CMD_GAME  = 8'b11100010;
+
+  localparam CMD_CHECK = 8'b10010000;
 
   reg [7:0]  led1, led2, led3, led4;    // represents each 7-segment display
   reg [15:0] irda_data;                 // stores the IrDA data and then sends it to the 7-segment displays
@@ -289,5 +293,7 @@ module ir_protocol (
   assign down_movement  = led2 == CMD_DOWN;
   assign left_movement  = led2 == CMD_LEFT;
   assign right_movement = led2 == CMD_RIGHT;
+  
+  assign check_bomb_cmd = received_packet && (led2 == CMD_CHECK);
 
 endmodule 
