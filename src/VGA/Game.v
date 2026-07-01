@@ -30,6 +30,9 @@ module Game (
     reg [31:0] square_x = `HDATA_BEGIN + `H_HALF - (SQUARE_SIZE / 2);
     reg [31:0] square_y = `VDATA_BEGIN + `V_HALF - (SQUARE_SIZE / 2);
     reg [31:0] square_speed_count = 0;
+    
+	wire [31:0] vline_index = (hpos - `HDATA_BEGIN) / LINE_SPACING;
+    wire [31:0] hline_index = (vpos - `VDATA_BEGIN) / LINE_SPACING;
 
     wire move_square_en;
     wire should_move_square;
@@ -71,11 +74,21 @@ module Game (
     // Color assignment logic (Pixel)
     always @(posedge vga_clk) begin
         if (should_draw_square) begin
-            rgb_input <= `COLOR_BLUE;
-        end else if (should_draw_vline) begin
-            rgb_input <= `COLOR_RED;
-        end else if (should_draw_hline) begin
             rgb_input <= `COLOR_GREEN;
+        end else if (should_draw_vline) begin
+		    case (vline_index % 4)
+                0 : rgb_input <= `COLOR_RED;
+                1 : rgb_input <= `COLOR_GREEN;
+                2 : rgb_input <= `COLOR_YELLOW;
+                3 : rgb_input <= `COLOR_WATER;
+            endcase
+        end else if (should_draw_hline) begin
+            case (hline_index % 4)
+	            0 : rgb_input <= `COLOR_RED;
+                1 : rgb_input <= `COLOR_GREEN;
+                2 : rgb_input <= `COLOR_YELLOW;
+                3 : rgb_input <= `COLOR_WATER;
+			endcase
         end else begin
             rgb_input <= `COLOR_BLACK;
         end

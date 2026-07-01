@@ -4,9 +4,9 @@
 `define VGA_UTILS_VH
 
 // Color Settings (3 bits: R, G, B)
-`define COLOR_WHITE  3'b111;
-`define COLOR_YELLOW 3'b110;
-`define COLOR_PURPLE 3'b101;
+`define COLOR_WHITE  3'b111
+`define COLOR_YELLOW 3'b110
+`define COLOR_PURPLE 3'b101
 `define COLOR_RED    3'b100
 `define COLOR_WATER  3'b011
 `define COLOR_GREEN  3'b010
